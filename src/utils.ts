@@ -2,17 +2,17 @@
  * 创建HTML元素
  * @param tag 标签名
  * @param attrs 初始属性
- * @returns
+ * @returns html
  */
 export function createElm(tag: string, attrs: any = {}) {
-  let el = document.createElement(tag);
+  let el = document.createElement(tag)
   for (const key in attrs) {
     if (Object.prototype.hasOwnProperty.call(attrs, key)) {
       //@ts-ignore
-      el[key] = attrs[key];
+      el[key] = attrs[key]
     }
   }
-  return el;
+  return el
 }
 
 /**
@@ -23,7 +23,7 @@ export function createElm(tag: string, attrs: any = {}) {
 export function setStyle(element: any, styles: { [key: string]: string }) {
   for (let key in styles) {
     if (Object.prototype.hasOwnProperty.call(styles, key)) {
-      element.style[key] = styles[key];
+      element.style[key] = styles[key]
     }
   }
 }
@@ -34,11 +34,11 @@ export function setStyle(element: any, styles: { [key: string]: string }) {
  * @returns
  */
 export function sleep(duration: number) {
-  return new Promise<void>(resolve => {
+  return new Promise<void>((resolve) => {
     setTimeout(() => {
-      resolve();
-    }, duration);
-  });
+      resolve()
+    }, duration)
+  })
 }
 
 /**
@@ -61,109 +61,109 @@ export function genJudgeOptionStatusFn(
    */
   function genTradingStatus(prev: number, val: number, next: number) {
     //已经过去的时间
-    let past;
+    let past
     if (val >= prev) {
-      past = (val - prev) * 60;
+      past = (val - prev) * 60
     } else {
-      past = interval * 60 - (next - val) * 60;
+      past = interval * 60 - (next - val) * 60
     }
     if (past <= purchaseTime) {
-      return 'purchasing';
+      return 'purchasing'
     } else {
-      return 'delivering';
+      return 'delivering'
     }
   }
 
   /**
    * @param val 当前的分钟数,需带上秒.如:当前为03分30秒,传入的val为3.5
    */
-  return function(val: number) {
-    let arrTotal: any = [];
-    let minLoop = false;
+  return function (val: number) {
+    let arrTotal: any = []
+    let minLoop = false
     /**
      * 生成周期枚举数组,比如:startMin=1,interval=3,生成的结果为[[1,4],[4,7],[7,10],[10,13]...]
      */
     function genIntervalArray(_startMin: number, interval: number) {
       if (_startMin >= 60) {
-        minLoop = true;
-        _startMin = _startMin - 60;
+        minLoop = true
+        _startMin = _startMin - 60
       }
 
-      let end = interval + _startMin;
-      let arr = [];
+      let end = interval + _startMin
+      let arr = []
       if (interval + _startMin >= 60) {
-        end = interval + _startMin - 60;
-        arr = [_startMin, end];
-        arrTotal.push(arr);
+        end = interval + _startMin - 60
+        arr = [_startMin, end]
+        arrTotal.push(arr)
       }
 
-      if (_startMin + interval > startMin && minLoop) return;
+      if (_startMin + interval > startMin && minLoop) return
 
-      arr = [_startMin, end];
-      arrTotal.push(arr);
-      genIntervalArray(interval + _startMin, interval);
+      arr = [_startMin, end]
+      arrTotal.push(arr)
+      genIntervalArray(interval + _startMin, interval)
     }
 
-    genIntervalArray(startMin, interval);
+    genIntervalArray(startMin, interval)
 
     let res = {
       prev: 0,
       status: '',
       now: 0,
       next: 0
-    };
+    }
 
     /**
      * 判断当前的时间处于哪个周期内,并且判断当前交易处于什么生命周期.
      * 生成一个res对象
      */
     for (let index = 0; index < arrTotal.length; index++) {
-      let v = arrTotal[index];
-      const prev = v[0];
-      const next = v[1];
+      let v = arrTotal[index]
+      const prev = v[0]
+      const next = v[1]
       if (prev > next) {
         if (val === prev) {
           res.prev =
-            next - interval < 0 ? 60 - next + interval : next - interval;
-          res.status = 'start';
+            next - interval < 0 ? 60 - next + interval : next - interval
+          res.status = 'start'
           res.next =
-            prev - interval < 0 ? 60 - prev + interval : prev - interval;
-          break;
+            prev - interval < 0 ? 60 - prev + interval : prev - interval
+          break
         } else if (val === next) {
           res.prev =
-            prev + interval >= 60 ? 60 - prev - interval : prev + interval;
-          res.status = 'end';
+            prev + interval >= 60 ? 60 - prev - interval : prev + interval
+          res.status = 'end'
           res.next =
-            next + interval >= 60 ? 60 - next - interval : next + interval;
-          break;
+            next + interval >= 60 ? 60 - next - interval : next + interval
+          break
         } else if (prev < val && next + 60 > val) {
-          res.prev = prev;
-          res.status = genTradingStatus(prev, val, next);
-          res.next = next;
-          break;
+          res.prev = prev
+          res.status = genTradingStatus(prev, val, next)
+          res.next = next
+          break
         }
       } else {
         if (prev < val && next > val) {
-          res.prev = prev;
-          res.status = genTradingStatus(prev, val, next);
-          res.next = next;
-          break;
+          res.prev = prev
+          res.status = genTradingStatus(prev, val, next)
+          res.next = next
+          break
         } else if (val === prev) {
-          res.prev = prev;
-          res.status = 'start';
-          res.next = next;
-          break;
+          res.prev = prev
+          res.status = 'start'
+          res.next = next
+          break
         } else if (val === next) {
           res.prev =
-            prev + interval >= 60 ? 60 - prev - interval : prev + interval;
-          res.status = 'end';
+            prev + interval >= 60 ? 60 - prev - interval : prev + interval
+          res.status = 'end'
           res.next =
-            next + interval >= 60 ? 60 - next - interval : next + interval;
-          break;
+            next + interval >= 60 ? 60 - next - interval : next + interval
+          break
         }
       }
     }
-    res.now = val;
-    return res;
-  };
+    res.now = val
+    return res
+  }
 }
