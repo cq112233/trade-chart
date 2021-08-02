@@ -2,7 +2,7 @@
  * 创建HTML元素
  * @param tag 标签名
  * @param attrs 初始属性
- * @returns
+ * @returns html
  */
 export function createElm(tag: string, attrs: any = {}) {
   let el = document.createElement(tag)
